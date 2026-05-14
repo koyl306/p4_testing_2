@@ -106,3 +106,11 @@ def borrowed(user_id: int, db: Session = Depends(get_db)):
     ).all()
 
     return borrows
+
+def getOverdueBooks(days: int, db: Session):
+    threshold = datetime.utcnow() - timedelta(days=days)
+
+    return db.query(models.Borrow).filter(
+        models.Borrow.returned_at.is_(None),
+        models.Borrow.due_date < threshold
+    ).all()
